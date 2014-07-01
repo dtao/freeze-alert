@@ -1,0 +1,51 @@
+<!doctype html>
+
+<html>
+    <head>
+        <title>Freeze Alert</title>
+        <script src="freezeAlert.js"></script>
+
+        <style>
+            body {
+                max-width: 960px;
+                margin: auto;
+            }
+
+            #timer {
+                background-color: #ffe;
+                padding: 1ex 1em;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Freeze Alert</h1>
+
+        <p>
+            This is a library to alert you if your website's UI becomes unresponsive for your users.
+            The way it works is by creating a web worker to listen for a "heartbeat" from the UI and
+            and a POST request to a URL that you specify in case it doesn't hear a pulse for some
+            time.
+        </p>
+
+        <p><button id="mischief-button">Click me to freeze the UI</button></p>
+
+        <p>Timer (to make it obvious when UI is frozen): <span id="timer">0</span></p>
+
+        <script>
+          FreezeAlert.monitor('/');
+
+          document.getElementById('mischief-button').onclick = function() {
+            // Freeze for 8 seconds.
+            var stop = Date.now() + 8000;
+            while (Date.now() < stop) {}
+          };
+
+          setInterval(function() {
+            var timer = document.getElementById('timer');
+            var value = Number(timer.textContent);
+            timer.textContent = value + 1;
+          }, 1000);
+        </script>
+    </body>
+</html>
