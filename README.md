@@ -10,6 +10,8 @@ Oh wait. Tricky problem, ain't it?
 
 ## Usage
 
+To start the worker to monitor your UI, call `FreezeAlert.monitor`:
+
 ```javascript
 FreezeAlert.monitor({
   // required: where you want a POST request when the UI becomes unresponsive
@@ -22,3 +24,7 @@ FreezeAlert.monitor({
   fileName: 'freezeAlert.js'
 });
 ```
+
+This will create the worker and start sending a heartbeat. When the worker hasn't heard from the UI within the specified `timeout`, it will send a POST request to the specified `url`.
+
+The `fileName` option is in case you have the file freezeAlert.js saved somewhere besides freezeAlert.js (the worker needs it).
