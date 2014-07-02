@@ -11,5 +11,14 @@ Oh wait. Tricky problem, ain't it?
 ## Usage
 
 ```javascript
-FreezeAlert.monitor('URL where you want to receive a POST request when the UI becomes unresponsive');
+FreezeAlert.monitor({
+  // required: where you want a POST request when the UI becomes unresponsive
+  url: 'http://yoursite.com/unresponsive',
+
+  // optional: how long (in ms) to give the UI before reporting a freeze
+  timeout: 5000,
+
+  // where freezeAlert.js resides (defaults to 'freezeAlert.js')
+  fileName: 'freezeAlert.js'
+});
 ```

@@ -33,7 +33,10 @@
         <p>Timer (to make it obvious when UI is frozen): <span id="timer">0</span></p>
 
         <script>
-          FreezeAlert.monitor('/');
+          FreezeAlert.monitor({
+            url: '/',
+            timeout: 3000
+          });
 
           document.getElementById('mischief-button').onclick = function() {
             // Freeze for 8 seconds.

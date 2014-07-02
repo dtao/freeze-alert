@@ -1,9 +1,15 @@
 (function() {
 
-  var endpoint, lastHeartbeat = Date.now(), intervalId;
+  var endpoint, timeout, lastHeartbeat = Date.now(), intervalId;
+
+  function parseOptions(optionsMessage) {
+    var options = JSON.parse(optionsMessage);
+    endpoint = options.url;
+    timeout = options.timeout || 5000;
+  }
 
   function checkForRecentHeartbeat() {
-    if (lastHeartbeat < Date.now() - 5000) {
+    if (lastHeartbeat < Date.now() - timeout) {
       alertEndpoint();
 
       // Once we've already alerted the endpoint, there's no need to keep
@@ -26,13 +32,14 @@
     this.onmessage = function(e) {
       var message = e.data;
 
-      // This must be the endpoint.
-      if (message !== 'ba-bump') {
-        endpoint = message;
-        this.postMessage('yo!');
+      // If it looks like '{...' it must be the options message.
+      if (message.charAt(0) === '{') {
+        parseOptions(message);
+        this.postMessage('options RECEIVED');
         return;
       }
 
+      // Otherwise it's just a humble little heartbeat.
       lastHeartbeat = Date.now();
 
       if (!intervalId) {
@@ -42,11 +49,14 @@
   }
 
   this.FreezeAlert = {
-    monitor: function monitor(endpoint) {
-      var worker = new Worker('freezeAlert.js');
+    monitor: function monitor(options) {
+      options || (options = {});
 
-      // Notify the worker of the endpoint.
-      worker.postMessage(endpoint);
+      var fileName = options.fileName || 'freezeAlert.js',
+          worker = new Worker(fileName);
+
+      // Notify the worker of endpoint, timeout, etc..
+      worker.postMessage(JSON.stringify(options));
 
       // After first response, start sending heartbeat.
       worker.addEventListener('message', function(e) {
